@@ -4,18 +4,23 @@
 #include <map>
 #include <k4a/k4a.h>
 #include <k4abt.h>
+#include "udp_sender.h"
 
 using namespace std;
 
 int main() {
-    k4a_device_t device = NULL;
+    // UDP socket initialize.
+    udp_sender sender{};
+    sender.init_sock();
+
+    k4a_device_t device = nullptr;
     if (K4A_FAILED(k4a_device_open(K4A_DEVICE_DEFAULT, &device))) {
         cout << "Failed to open k4a device!" << endl;
         return 1;
     }
 
     size_t serial_size = 0;
-    k4a_device_get_serialnum(device, NULL, &serial_size);
+    k4a_device_get_serialnum(device, nullptr, &serial_size);
     char *serial = (char *) (malloc(serial_size));
     k4a_device_get_serialnum(device, serial, &serial_size);
     cout << "Opened device: " << serial << endl;
@@ -36,7 +41,7 @@ int main() {
     // Start body tracking !!!!!
     k4a_calibration_t calibration;
     k4a_device_get_calibration(device, config.depth_mode, config.color_resolution, &calibration);
-    k4abt_tracker_t tracker = NULL;
+    k4abt_tracker_t tracker = nullptr;
     k4abt_tracker_configuration_t tracker_config = K4ABT_TRACKER_CONFIG_DEFAULT;
     k4abt_tracker_create(&calibration, tracker_config, &tracker);
 
@@ -94,7 +99,7 @@ int main() {
                 break;
             }
 
-            k4abt_frame_t frame = NULL;
+            k4abt_frame_t frame = nullptr;
             k4a_wait_result_t pop_result = k4abt_tracker_pop_result(tracker, &frame, 50);
             if (pop_result == K4A_WAIT_RESULT_SUCCEEDED) {
                 size_t num_bodies = k4abt_frame_get_num_bodies(frame);
@@ -110,6 +115,9 @@ int main() {
                     string joint_name = joint_map[(k4abt_joint_id_t) id];
                     bones[joint_name] = joint;
                 }
+
+                // Send UDP data.
+                sender.send_data(bones);
             } else if (pop_result == K4A_WAIT_RESULT_TIMEOUT) {
                 cout << "Error! Pop body frame result timeout!" << endl;
                 break;
@@ -131,6 +139,9 @@ int main() {
     k4abt_tracker_destroy(tracker);
     k4a_device_stop_cameras(device);
     k4a_device_close(device);
+
+    // close socket.
+    sender.close_sock();
 
     return 0;
 }
