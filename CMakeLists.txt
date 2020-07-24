@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.16)
+project(KinectTest)
+
+set(CMAKE_CXX_STANDARD 14)
+include_directories("C:\\Program Files\\Azure Kinect SDK v1.4.1\\sdk\\include")
+include_directories("C:\\Program Files\\Azure Kinect Body Tracking SDK\\sdk\\include")
+link_directories("C:\\Program Files\\Azure Kinect Body Tracking SDK\\sdk\\windows-desktop\\amd64\\release\\lib")
+link_directories("C:\\Program Files\\Azure Kinect SDK v1.4.1\\sdk\\windows-desktop\\amd64\\release\\lib")
+add_executable(KinectTest main.cpp)
+target_link_libraries(KinectTest k4a k4abt)
