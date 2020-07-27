@@ -6,8 +6,6 @@
 #include <k4abt.h>
 #include <map>
 
-using namespace std;
-
 class udp_receiver {
     SOCKET sock;
     WSAData wsadata;
@@ -19,7 +17,7 @@ public:
 
     void close_sock() const;
 
-    void receive_data();
+    std::map<std::string, k4abt_joint_t> receive_data();
 };
 
 

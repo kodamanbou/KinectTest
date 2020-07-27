@@ -1,9 +1,14 @@
 #include "udp_sender.h"
+#include "custom_serializer.h"
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/serialization/map.hpp>
+
+BOOST_CLASS_IMPLEMENTATION(k4abt_joint_t , boost::serialization::object_class_info);
+BOOST_CLASS_IMPLEMENTATION(k4a_float3_t , boost::serialization::object_class_info);
+BOOST_CLASS_IMPLEMENTATION(k4a_quaternion_t , boost::serialization::object_class_info);
 
 void udp_sender::init_sock() {
     int err = WSAStartup(MAKEWORD(1, 0), &wsadata);
@@ -31,7 +36,7 @@ void udp_sender::init_sock() {
 
     sock = socket(AF_INET, SOCK_DGRAM, 0);
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(50000);
+    addr.sin_port = htons(49875);
     addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 }
 
