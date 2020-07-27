@@ -6,7 +6,7 @@ int main() {
 
     try {
         receiver.init_sock();
-    } catch (std::exception e) {
+    } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
         return 1;
     }
@@ -14,7 +14,7 @@ int main() {
     for (int i = 0; i < 100; ++i) {
         try {
             bones = receiver.receive_data();
-        } catch (std::exception e) {
+        } catch (std::exception &e) {
             std::cout << e.what() << std::endl;
             return 1;
         }
