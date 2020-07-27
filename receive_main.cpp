@@ -8,6 +8,7 @@ int main() {
         receiver.init_sock();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
+        receiver.close_sock();
         return 1;
     }
 
@@ -16,6 +17,7 @@ int main() {
             bones = receiver.receive_data();
         } catch (std::exception &e) {
             std::cout << e.what() << std::endl;
+            receiver.close_sock();
             return 1;
         }
         std::cout << "Head X: " << bones["Head"].position.xyz.x << std::endl;
