@@ -7,8 +7,8 @@
 #include <boost/serialization/map.hpp>
 
 BOOST_CLASS_IMPLEMENTATION(k4abt_joint_t , boost::serialization::object_class_info);
-BOOST_CLASS_IMPLEMENTATION(k4a_float3_t , boost::serialization::object_class_info);
-BOOST_CLASS_IMPLEMENTATION(k4a_quaternion_t , boost::serialization::object_class_info);
+BOOST_CLASS_IMPLEMENTATION(k4a_float3_t , boost::serialization::object_serializable);
+BOOST_CLASS_IMPLEMENTATION(k4a_quaternion_t , boost::serialization::object_serializable);
 
 void udp_sender::init_sock() {
     int err = WSAStartup(MAKEWORD(1, 0), &wsadata);
@@ -53,6 +53,6 @@ void udp_sender::send_data(map<string, k4abt_joint_t>& data) {
     oa << data;
     ostr.flush();
 
-    sendto(sock, buffer.c_str(), sizeof(buffer.c_str()), 0, (struct sockaddr *) &addr, sizeof(addr));
-    cout << "Sent " << sizeof(buffer.c_str()) << "bytes" << endl;
+    sendto(sock, buffer.c_str(), buffer.size(), 0, (struct sockaddr *) &addr, sizeof(addr));
+    cout << "Sent " << buffer.size() << "bytes" << endl;
 }

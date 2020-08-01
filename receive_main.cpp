@@ -18,7 +18,7 @@ int main() {
         } catch (std::exception &e) {
             std::cout << e.what() << std::endl;
             receiver.close_sock();
-            return 1;
+            return 2;
         }
         std::cout << "Head X: " << bones["Head"].position.xyz.x << std::endl;
     }

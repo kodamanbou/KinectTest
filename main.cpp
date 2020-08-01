@@ -85,7 +85,7 @@ int main() {
     joint_map[K4ABT_JOINT_EYE_RIGHT] = "RightEye";
     joint_map[K4ABT_JOINT_EAR_RIGHT] = "";
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 3000; i++) {
         k4a_capture_t capture;
         k4a_wait_result_t result = k4a_device_get_capture(device, &capture, K4A_WAIT_INFINITE);
         if (result == K4A_WAIT_RESULT_SUCCEEDED) {
@@ -105,19 +105,21 @@ int main() {
                 size_t num_bodies = k4abt_frame_get_num_bodies(frame);
                 cout << num_bodies << "bodies are detected !!" << endl;
 
-                k4abt_skeleton_t skeleton;
-                k4abt_frame_get_body_skeleton(frame, 0, &skeleton);
-                k4abt_frame_release(frame);
+                if (num_bodies > 0) {
+                    k4abt_skeleton_t skeleton;
+                    k4abt_frame_get_body_skeleton(frame, 0, &skeleton);
+                    k4abt_frame_release(frame);
 
-                map<string, k4abt_joint_t> bones;
-                for (int id = 0; id < (int) K4ABT_JOINT_COUNT; ++id) {
-                    k4abt_joint_t joint = skeleton.joints[(k4abt_joint_id_t) id];
-                    string joint_name = joint_map[(k4abt_joint_id_t) id];
-                    bones[joint_name] = joint;
+                    map<string, k4abt_joint_t> bones;
+                    for (int id = 0; id < (int) K4ABT_JOINT_COUNT; ++id) {
+                        k4abt_joint_t joint = skeleton.joints[(k4abt_joint_id_t) id];
+                        string joint_name = joint_map[(k4abt_joint_id_t) id];
+                        bones[joint_name] = joint;
+                    }
+
+                    // Send UDP data.
+                    sender.send_data(bones);
                 }
-
-                // Send UDP data.
-                sender.send_data(bones);
             } else if (pop_result == K4A_WAIT_RESULT_TIMEOUT) {
                 cout << "Error! Pop body frame result timeout!" << endl;
                 break;

@@ -2,6 +2,7 @@
 #define KINECTTEST_CUSTOM_SERIALIZER_H
 
 #include <k4abt.h>
+#include <boost/serialization/array.hpp>
 
 namespace boost {
     namespace serialization {
@@ -12,12 +13,24 @@ namespace boost {
 
         template<class Archive>
         void serialize(Archive &ar, k4a_float3_t &floats, const unsigned int version) {
-            ar & floats.xyz.x & floats.xyz.y & floats.xyz.z & floats.v;
+            ar & floats.xyz;
+            ar & make_array(floats.v, sizeof(floats.v));
+        }
+
+        template<class Archive>
+        void serialize(Archive &ar, k4a_float3_t::_xyz &xyz, const unsigned int version) {
+            ar & xyz.x & xyz.y & xyz.z;
         }
 
         template<class Archive>
         void serialize(Archive &ar, k4a_quaternion_t &quaternion, const unsigned int version) {
-            ar & quaternion.wxyz.w & quaternion.wxyz.x & quaternion.wxyz.y & quaternion.wxyz.z & quaternion.v;
+            ar & quaternion.wxyz;
+            ar & make_array(quaternion.v, sizeof(quaternion.v));
+        }
+
+        template<class Archive>
+        void serialize(Archive &ar, k4a_quaternion_t::_wxyz &wxyz, const unsigned int version) {
+            ar & wxyz.w & wxyz.x & wxyz.y & wxyz.z;
         }
     }
 }
