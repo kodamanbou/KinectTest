@@ -1,14 +1,5 @@
 #include "udp_receiver.h"
-#include "custom_serializer.h"
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/iostreams/device/array.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/serialization/map.hpp>
-
-BOOST_CLASS_IMPLEMENTATION(k4abt_joint_t , boost::serialization::object_serializable);
-BOOST_CLASS_IMPLEMENTATION(k4a_float3_t , boost::serialization::object_serializable);
-BOOST_CLASS_IMPLEMENTATION(k4a_quaternion_t , boost::serialization::object_serializable);
+#include <string>
 
 void udp_receiver::init_sock() {
     int err = WSAStartup(MAKEWORD(1, 0), &wsadata);
@@ -50,19 +41,14 @@ void udp_receiver::close_sock() const {
     WSACleanup();
 }
 
-std::map<std::string, k4abt_joint_t> udp_receiver::receive_data() {
+json udp_receiver::receive_data() {
     memset(buff, 0, sizeof(buff));
     int code = recv(sock, buff, sizeof(buff), 0);
     if (code == SOCKET_ERROR) {
         throw std::exception(std::to_string(WSAGetLastError()).c_str());
     }
     std::cout << "Received " << code << "bytes !!" << std::endl;
+    json j = json::parse(buff);
 
-    boost::iostreams::basic_array_source<char> device(buff, code);
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char>> istr(device);
-    std::map<std::string, k4abt_joint_t> bones;
-    boost::archive::binary_iarchive ia(istr);
-    ia >> bones;
-
-    return bones;
+    return j;
 }

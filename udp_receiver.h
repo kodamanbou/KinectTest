@@ -4,21 +4,23 @@
 #include <iostream>
 #include <winsock.h>
 #include <k4abt.h>
-#include <boost/serialization/export.hpp>
 #include <map>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 class udp_receiver {
     SOCKET sock;
     WSAData wsadata;
     struct sockaddr_in addr;
-    char buff[5120];
+    char buff[7168];
 
 public:
     void init_sock();
 
     void close_sock() const;
 
-    std::map<std::string, k4abt_joint_t> receive_data();
+    json receive_data();
 };
 
 #endif //KINECTTEST_UDP_RECEIVER_H

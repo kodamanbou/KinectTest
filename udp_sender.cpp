@@ -1,14 +1,7 @@
 #include "udp_sender.h"
-#include "custom_serializer.h"
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/iostreams/device/array.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/serialization/map.hpp>
+#include <nlohmann/json.hpp>
 
-BOOST_CLASS_IMPLEMENTATION(k4abt_joint_t , boost::serialization::object_class_info);
-BOOST_CLASS_IMPLEMENTATION(k4a_float3_t , boost::serialization::object_serializable);
-BOOST_CLASS_IMPLEMENTATION(k4a_quaternion_t , boost::serialization::object_serializable);
+using json = nlohmann::json;
 
 void udp_sender::init_sock() {
     int err = WSAStartup(MAKEWORD(1, 0), &wsadata);
@@ -45,14 +38,20 @@ void udp_sender::close_sock() const {
     WSACleanup();
 }
 
-void udp_sender::send_data(map<string, k4abt_joint_t>& data) {
+void udp_sender::send_data(map<string, k4abt_joint_t> &data) {
     string buffer;
-    boost::iostreams::back_insert_device<string> inserter(buffer);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<string>> ostr(inserter);
-    boost::archive::binary_oarchive oa(ostr);
-    oa << data;
-    ostr.flush();
+    json j;
+    for (pair<string, k4abt_joint_t> p:data) {
+        j[p.first]["orientation"]["w"] = p.second.orientation.wxyz.w;
+        j[p.first]["orientation"]["x"] = p.second.orientation.wxyz.x;
+        j[p.first]["orientation"]["y"] = p.second.orientation.wxyz.y;
+        j[p.first]["orientation"]["z"] = p.second.orientation.wxyz.z;
+        j[p.first]["position"]["x"] = p.second.position.xyz.x;
+        j[p.first]["position"]["y"] = p.second.position.xyz.y;
+        j[p.first]["position"]["z"] = p.second.position.xyz.z;
+    }
 
+    buffer = j.dump();
     sendto(sock, buffer.c_str(), buffer.size(), 0, (struct sockaddr *) &addr, sizeof(addr));
     cout << "Sent " << buffer.size() << "bytes" << endl;
 }
