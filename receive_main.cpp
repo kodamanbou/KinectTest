@@ -20,7 +20,10 @@ int main() {
             receiver.close_sock();
             return 2;
         }
-        std::cout << "Head X: " << j["Head"]["position"]["x"] << std::endl;
+        std::cout << "Lower W: " << j["LeftLowerArm"]["orientation"]["w"] << " ";
+        std::cout << "Lower X: " << j["LeftLowerArm"]["orientation"]["x"] << " ";
+        std::cout << "Lower Y: " << j["LeftLowerArm"]["orientation"]["y"] << " ";
+        std::cout << "Lower Z: " << j["LeftLowerArm"]["orientation"]["z"] << std::endl;
     }
 
     receiver.close_sock();
