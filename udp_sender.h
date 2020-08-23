@@ -18,7 +18,7 @@ public:
 
     void close_sock() const;
 
-    void send_data(map<string, k4abt_joint_t> &data);
+    void send_data(map<int, k4abt_joint_t> &data);
 };
 
 #endif //KINECTTEST_UDP_SENDER_H

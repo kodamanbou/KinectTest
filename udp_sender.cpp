@@ -38,17 +38,14 @@ void udp_sender::close_sock() const {
     WSACleanup();
 }
 
-void udp_sender::send_data(map<string, k4abt_joint_t> &data) {
+void udp_sender::send_data(map<int, k4abt_joint_t> &data) {
     string buffer;
     json j;
-    for (pair<string, k4abt_joint_t> p:data) {
-        j[p.first]["orientation"]["w"] = p.second.orientation.wxyz.w;
-        j[p.first]["orientation"]["x"] = p.second.orientation.wxyz.x;
-        j[p.first]["orientation"]["y"] = p.second.orientation.wxyz.y;
-        j[p.first]["orientation"]["z"] = p.second.orientation.wxyz.z;
-        j[p.first]["position"]["x"] = p.second.position.xyz.x;
-        j[p.first]["position"]["y"] = p.second.position.xyz.y;
-        j[p.first]["position"]["z"] = p.second.position.xyz.z;
+    for (pair<int, k4abt_joint_t> p:data) {
+        j[p.first]["w"] = p.second.orientation.wxyz.w;
+        j[p.first]["x"] = p.second.orientation.wxyz.x;
+        j[p.first]["y"] = p.second.orientation.wxyz.y;
+        j[p.first]["z"] = p.second.orientation.wxyz.z;
     }
 
     buffer = j.dump();

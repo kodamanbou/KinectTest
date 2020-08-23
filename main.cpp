@@ -45,47 +45,7 @@ int main() {
     k4abt_tracker_configuration_t tracker_config = K4ABT_TRACKER_CONFIG_DEFAULT;
     k4abt_tracker_create(&calibration, tracker_config, &tracker);
 
-    map<k4abt_joint_id_t, string> joint_map;
-    joint_map[K4ABT_JOINT_PELVIS] = "Hips";
-    joint_map[K4ABT_JOINT_SPINE_NAVEL] = "Spine";
-    joint_map[K4ABT_JOINT_SPINE_CHEST] = "Chest";
-    joint_map[K4ABT_JOINT_NECK] = "Neck";
-
-    joint_map[K4ABT_JOINT_CLAVICLE_LEFT] = "LeftShoulder";
-    joint_map[K4ABT_JOINT_SHOULDER_LEFT] = "LeftUpperArm";
-    joint_map[K4ABT_JOINT_ELBOW_LEFT] = "LeftLowerArm";
-    joint_map[K4ABT_JOINT_WRIST_LEFT] = "LeftHand";
-    joint_map[K4ABT_JOINT_HAND_LEFT] = "LeftIndexProximal";
-    joint_map[K4ABT_JOINT_HANDTIP_LEFT] = "LeftIndexDistal";
-    joint_map[K4ABT_JOINT_THUMB_LEFT] = "LeftThumbDistal";
-
-    joint_map[K4ABT_JOINT_CLAVICLE_RIGHT] = "RightShoulder";
-    joint_map[K4ABT_JOINT_SHOULDER_RIGHT] = "RightUpperArm";
-    joint_map[K4ABT_JOINT_ELBOW_RIGHT] = "RightLowerArm";
-    joint_map[K4ABT_JOINT_WRIST_RIGHT] = "RightHand";
-    joint_map[K4ABT_JOINT_HAND_RIGHT] = "RightIndexProximal";
-    joint_map[K4ABT_JOINT_HANDTIP_RIGHT] = "RightIndexDistal";
-    joint_map[K4ABT_JOINT_THUMB_RIGHT] = "RightThumbDistal";
-
-    joint_map[K4ABT_JOINT_HIP_LEFT] = "LeftUpperLeg";
-    joint_map[K4ABT_JOINT_KNEE_LEFT] = "LeftLowerLeg";
-    joint_map[K4ABT_JOINT_ANKLE_LEFT] = "LeftFoot";
-    joint_map[K4ABT_JOINT_FOOT_LEFT] = "LeftToe";
-
-    joint_map[K4ABT_JOINT_HIP_RIGHT] = "RightUpperLeg";
-    joint_map[K4ABT_JOINT_KNEE_RIGHT] = "RightLowerLeg";
-    joint_map[K4ABT_JOINT_ANKLE_RIGHT] = "RightFoot";
-    joint_map[K4ABT_JOINT_FOOT_RIGHT] = "RightToe";
-
-    joint_map[K4ABT_JOINT_HEAD] = "Head";
-    joint_map[K4ABT_JOINT_NOSE] = "";
-
-    joint_map[K4ABT_JOINT_EYE_LEFT] = "LeftEye";
-    joint_map[K4ABT_JOINT_EAR_LEFT] = "";
-    joint_map[K4ABT_JOINT_EYE_RIGHT] = "RightEye";
-    joint_map[K4ABT_JOINT_EAR_RIGHT] = "";
-
-    for (int i = 0; i < 3000; i++) {
+    for (int i = 0; i < 20000; i++) {
         k4a_capture_t capture;
         k4a_wait_result_t result = k4a_device_get_capture(device, &capture, K4A_WAIT_INFINITE);
         if (result == K4A_WAIT_RESULT_SUCCEEDED) {
@@ -110,11 +70,10 @@ int main() {
                     k4abt_frame_get_body_skeleton(frame, 0, &skeleton);
                     k4abt_frame_release(frame);
 
-                    map<string, k4abt_joint_t> bones;
+                    map<int, k4abt_joint_t> bones;
                     for (int id = 0; id < (int) K4ABT_JOINT_COUNT; ++id) {
                         k4abt_joint_t joint = skeleton.joints[(k4abt_joint_id_t) id];
-                        string joint_name = joint_map[(k4abt_joint_id_t) id];
-                        bones[joint_name] = joint;
+                        bones[id] = joint;
                     }
 
                     // Send UDP data.
