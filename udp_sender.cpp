@@ -42,10 +42,10 @@ void udp_sender::send_data(map<int, k4abt_joint_t> &data) {
     string buffer;
     json j;
     for (pair<int, k4abt_joint_t> p:data) {
-        j[p.first]["w"] = p.second.orientation.wxyz.w;
-        j[p.first]["x"] = p.second.orientation.wxyz.x;
-        j[p.first]["y"] = p.second.orientation.wxyz.y;
-        j[p.first]["z"] = p.second.orientation.wxyz.z;
+        j["data"][p.first]["w"] = p.second.orientation.wxyz.w;
+        j["data"][p.first]["x"] = p.second.orientation.wxyz.x;
+        j["data"][p.first]["y"] = p.second.orientation.wxyz.y;
+        j["data"][p.first]["z"] = p.second.orientation.wxyz.z;
     }
 
     buffer = j.dump();
